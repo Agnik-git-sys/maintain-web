@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Made For You ✦</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0b0e;
+    --surface: #141116;
+    --card: #1a171e;
+    --border: rgba(255,255,255,0.07);
+    --accent: #e8c4a0;
+    --accent2: #c9a6d4;
+    --text: #f0ead8;
+    --muted: rgba(240,234,216,0.45);
+    --glow: rgba(232,196,160,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Noise texture overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Ambient blobs ── */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .blob-1 { width: 500px; height: 500px; background: #c9a6d4; top: -150px; right: -150px; animation-duration: 22s; }
+  .blob-2 { width: 400px; height: 400px; background: #e8c4a0; bottom: 100px; left: -100px; animation-duration: 16s; }
+  .blob-3 { width: 300px; height: 300px; background: #a6b4d4; top: 40%; left: 40%; animation-duration: 20s; }
+
+  @keyframes drift {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(40px, 30px) scale(1.08); }
+  }
+
+  /* ── Page layout ── */
+  .page { position: relative; z-index: 1; }
+
+  /* ── Header ── */
+  header {
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.7;
+    margin-bottom: 20px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(48px, 8vw, 88px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    animation: fadeUp 0.8s 0.15s ease both;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    margin-top: 20px;
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .divider {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+    margin: 40px auto 0;
+    animation: fadeIn 1s 0.5s ease both;
+  }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    max-width: 1080px;
+    margin: 60px auto;
+    padding: 0 40px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                box-shadow 0.4s ease,
+                border-color 0.3s ease;
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.4s; }
+  .card:nth-child(2) { animation-delay: 0.55s; }
+  .card:nth-child(3) { animation-delay: 0.7s; }
+
+  .card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(232,196,160,0.2);
+    border-color: rgba(232,196,160,0.25);
+  }
+
+  /* Shimmer on hover */
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 20px;
+    pointer-events: none;
+  }
+  .card:hover::after { opacity: 1; }
+
+  /* ── Preview window ── */
+  .preview {
+    width: 100%;
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+    background: #0f0d12;
+  }
+
+  .preview-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .card:hover .preview-inner { transform: scale(1.08); }
+
+  .preview-1 { background: linear-gradient(135deg, #1a1025 0%, #2a1535 50%, #1a1025 100%); }
+  .preview-2 { background: linear-gradient(135deg, #0e1820 0%, #102030 50%, #0e1820 100%); }
+  .preview-3 { background: linear-gradient(135deg, #1a1a10 0%, #252515 50%, #1a1a10 100%); }
+
+  .preview-label {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .preview-dots {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    display: flex;
+    gap: 5px;
+  }
+  .preview-dots span {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+  }
+
+  /* ── Card body ── */
+  .card-body { padding: 24px 28px 28px; }
+
+  .card-tag {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.65;
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .card-desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+
+  .card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(232,196,160,0.3);
+    padding-bottom: 2px;
+    transition: gap 0.3s ease, border-color 0.3s ease;
+  }
+
+  .card-link:hover { gap: 14px; border-color: var(--accent); }
+
+  .arrow { transition: transform 0.3s ease; }
+  .card-link:hover .arrow { transform: translateX(4px); }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 60px 40px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--border);
+    margin: 0 auto 30px;
+  }
+
+  .footer-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+
+  .footer-heart {
+    color: var(--accent);
+    animation: pulse 2.5s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.3); opacity: 1; }
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    header { padding: 60px 24px 40px; }
+    .grid { padding: 0 20px; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Ambient blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- Header -->
+  <header>
+    <p class="eyebrow">made with love, just for you</p>
+    <h1>Things I <em>built</em><br>for you</h1>
+    <p class="subtitle">A small collection. More on the way.</p>
+    <div class="divider"></div>
+  </header>
+
+  <!-- Cards -->
+  <div class="grid">
+
+    <!-- Card 1 -->
+    <div class="card" onclick="window.open('https://agnik-git-sys.github.io/sanchari/', '_blank')">
+      <div class="preview preview-1">
+        <div class="preview-inner">✦</div>
+        <span class="preview-label">Preview</span>
+        <div class="preview-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="card-body">
+        <p class="card-tag">Project 01</p>
+        <h2 class="card-title">Your First Website</h2>
+        <p class="card-desc">She got angry on that day!</p>
+        <a class="card-link" href="https://agnik-git-sys.github.io/sanchari/" target="_blank">
+          Visit <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card" onclick="window.open('https://agnik-git-sys.github.io/hbd-san/', '_blank')">
+      <div class="preview preview-2">
+        <div class="preview-inner">◈</div>
+        <span class="preview-label">Preview</span>
+        <div class="preview-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="card-body">
+        <p class="card-tag">Project 02</p>
+        <h2 class="card-title">Your Second Website</h2>
+        <p class="card-desc">Her birthday sitee!</p>
+        <a class="card-link" href="https://agnik-git-sys.github.io/hbd-san/" target="_blank">
+          Visit <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card" onclick="window.open('https://agnik-git-sys.github.io/sorryyyyyy/', '_blank')">
+      <div class="preview preview-3">
+        <div class="preview-inner">❋</div>
+        <span class="preview-label">Preview</span>
+        <div class="preview-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="card-body">
+        <p class="card-tag">Project 03</p>
+        <h2 class="card-title">Salini Website</h2>
+        <p class="card-desc">For salini!</p>
+        <a class="card-link" href="https://agnik-git-sys.github.io/sorryyyyyy/" target="_blank">
+          Visit <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-divider"></div>
+    <p class="footer-note">still building, still thinking of you <span class="footer-heart">♡</span></p>
+  </footer>
+
+</div>
+</body>
+</html>
